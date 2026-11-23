@@ -1,10 +1,9 @@
-﻿name,country,countryJa,countryEn,status,order
-Peking University (Đại học Bắc Kinh),"🇨🇳 Bắc Kinh, Trung Quốc",🇨🇳 北京・中国,"🇨🇳 Beijing, China",TRUE,1
-Tsinghua University (Đại học Thanh Hoa),"🇨🇳 Bắc Kinh, Trung Quốc",🇨🇳 北京・中国,"🇨🇳 Beijing, China",TRUE,2
-Fudan University (Đại học Phục Đán),"🇨🇳 Thượng Hải, Trung Quốc",🇨🇳 上海・中国,"🇨🇳 Shanghai, China",TRUE,3
-Shanghai Jiao Tong University (ĐH Giao thông Thượng Hải),"🇨🇳 Thượng Hải, Trung Quốc",🇨🇳 上海・中国,"🇨🇳 Shanghai, China",TRUE,4
-Zhejiang University (Đại học Chiết Giang),"🇨🇳 Hàng Châu, Trung Quốc",🇨🇳 杭州・中国,"🇨🇳 Hangzhou, China",TRUE,5
-Wuhan University (Đại học Vũ Hán),"🇨🇳 Vũ Hán, Trung Quốc",🇨🇳 武汉・中国,"🇨🇳 Wuhan, China",TRUE,6
-East China Normal University (ĐH Sư phạm Hoa Đông),"🇨🇳 Thượng Hải, Trung Quốc",🇨🇳 上海・中国,"🇨🇳 Shanghai, China",TRUE,7
-Beijing Foreign Studies University (ĐH Ngoại ngữ Bắc Kinh),"🇨🇳 Bắc Kinh, Trung Quốc",🇨🇳 北京・中国,"🇨🇳 Beijing, China",TRUE,8
-Chongqing University (Đại học Trùng Khánh),"🇨🇳 Trùng Khánh, Trung Quốc",🇨🇳 重庆・中国,"🇨🇳 Chongqing, China",TRUE,9
+﻿id,name_vi,name_zh,location,rank,note
+peking-univ,Đại học Bắc Kinh (Peking University),北京大学 (Peking University),Bắc Kinh / 北京,C9 League • Top 1 Trung Quốc,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+tsinghua-univ,Đại học Thanh Hoa (Tsinghua University),清华大学 (Tsinghua University),Bắc Kinh / 北京,C9 League • Hàng đầu Châu Á,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+sjtu,Đại học Giao thông Thượng Hải (SJTU),上海交通大学 (Shanghai Jiao Tong),Thượng Hải / 上海,C9 League • Top 3 Trung Quốc,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+ecnu,Đại học Sư phạm Hoa Đông (ECNU),华东师范大学 (East China Normal),Thượng Hải / 上海,Dự án 985 • Top 1 Giáo dục Hán ngữ,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+sus,Đại học Thể thao Thượng Hải (SUS),上海体育大学 (Shanghai Univ of Sport),Thượng Hải / 上海,Song Nhất Lưu • Đối tác chiến lược,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+whu,Đại học Vũ Hán (Wuhan University),武汉大学 (Wuhan University),Vũ Hán / 武汉,Dự án 985 • ĐH Đẹp nhất Trung Quốc,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+bfsu,Đại học Ngoại ngữ Bắc Kinh (BFSU),北京外国语大学 (Beijing Foreign Studies),Bắc Kinh / 北京,Dự án 211 • Cái nôi Ngoại giao,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
+cqu,Đại học Trùng Khánh (Chongqing University),重庆大学 (Chongqing University),Trùng Khánh / 重庆,Dự án 985 • Trọng điểm Tây Nam,Vị trí: Logo & thẻ trường đối tác ở cuối trang chủ
