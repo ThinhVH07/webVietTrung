@@ -1,98 +1,85 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import Container from "@/components/layout/Container";
 import { useLanguage } from "@/components/providers/LanguageProvider";
+import { fetchStatsFromSheet, getCachedStats, type StatItemData } from "@/lib/googleSheets";
 
-const stats = [
-  { value: 500, suffix: "+", labelKey: "students" as const },
-  { value: 20, suffix: "+", labelKey: "programs" as const },
-  { value: 10, suffix: "+", labelKey: "partners" as const },
-  { value: 15, suffix: "", labelKey: "years" as const },
+const defaultStats: StatItemData[] = [
+  { key: "stat_students", value: 9999, suffix: "+", label_vi: "Người dùng / Học viên", label_zh: "累计咨询学子" },
+  { key: "stat_success", value: 345, suffix: "+", label_vi: "Apply thành công", label_zh: "奖学金申请成功" },
+  { key: "stat_partners", value: 120, suffix: "+", label_vi: "Trường đại học đối tác", label_zh: "中方合作高校" },
+  { key: "stat_scholarships", value: 138, suffix: "+", label_vi: "Suất học bổng đã trao", label_zh: "全额奖学金名额" },
 ];
 
-function useCountUp(target: number, duration = 1800) {
-  const [count, setCount] = useState(0);
-  const [started, setStarted] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !started) setStarted(true);
-      },
-      { threshold: 0.3 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [started]);
-
-  useEffect(() => {
-    if (!started) return;
-    let start = 0;
-    const increment = Math.max(1, Math.floor(target / (duration / 20)));
-    const timer = setInterval(() => {
-      start += increment;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, 20);
-    return () => clearInterval(timer);
-  }, [started, target, duration]);
-
-  return { count, ref };
-}
-
 function StatItem({
-  stat,
-  index,
+  value,
+  suffix,
+  label,
+  isLast,
 }: {
-  stat: (typeof stats)[number];
-  index: number;
+  value: number;
+  suffix: string;
+  label: string;
+  isLast: boolean;
 }) {
-  const { count, ref } = useCountUp(stat.value);
-  const { t } = useLanguage();
-
   return (
-    <motion.div
-      ref={ref}
-      className="text-center p-6 rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.1 }}
+    <div
+      className={`relative py-6 px-4 text-center ${
+        !isLast ? "md:border-r border-red-200/70" : ""
+      }`}
     >
-      <p className="text-4xl sm:text-5xl font-heading font-extrabold mb-2 text-accent-400">
-        {count}
-        {stat.suffix}
+      <p className="font-heading font-black text-4xl sm:text-5xl lg:text-6xl text-[#84150e] leading-tight tracking-tight mb-1">
+        {value.toLocaleString()}
+        {suffix}
       </p>
-      <p className="text-primary-100 text-sm font-semibold uppercase tracking-wider">
-        {t.stats[stat.labelKey]}
+      <p className="text-neutral-800 text-sm sm:text-base font-bold uppercase tracking-wide">
+        {label}
       </p>
-    </motion.div>
+    </div>
   );
 }
 
 export default function StatsCounter() {
-  const { t } = useLanguage();
+  const { locale } = useLanguage();
+  const [statsList, setStatsList] = useState<StatItemData[]>(defaultStats);
+
+  useEffect(() => {
+    // 1. Nạp tức thì từ cache nếu đã có và hợp lệ
+    const cached = getCachedStats();
+    if (cached && cached.length > 0 && cached[0].value !== 2468) {
+      setStatsList(cached);
+    }
+    // 2. Fetch fresh từ Google Sheets và cập nhật ngay khi mạng phản hồi
+    fetchStatsFromSheet().then((data) => {
+      if (data && data.length > 0) {
+        setStatsList(data);
+      }
+    });
+  }, []);
+
+  const stats = statsList.map((s) => ({
+    value: s.value,
+    suffix: s.suffix,
+    label: locale === "zh" ? s.label_zh || s.label_vi : s.label_vi,
+  }));
 
   return (
-    <section className="section-padding bg-gradient-to-r from-primary-600 via-primary-700 to-primary-900 text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none" />
-      <Container className="relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <h2 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-3 text-white">
-            {t.sections.stats}
-          </h2>
-          <div className="w-16 h-1 bg-accent-400 rounded-full mx-auto" />
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+    <section className="bg-gradient-to-r from-red-50/90 via-rose-50/70 to-blue-50/60 border-y border-red-200/60 py-8 md:py-12">
+      <Container>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-0 items-center">
           {stats.map((stat, i) => (
-            <StatItem key={i} stat={stat} index={i} />
+            <div
+              key={i}
+              className="transition-transform duration-300 hover:-translate-y-1"
+            >
+              <StatItem
+                value={stat.value}
+                suffix={stat.suffix}
+                label={stat.label}
+                isLast={i === stats.length - 1}
+              />
+            </div>
           ))}
         </div>
       </Container>

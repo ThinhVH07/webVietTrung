@@ -1,12 +1,6 @@
-import { notFound } from "next/navigation";
-import { programs, getProgramBySlug } from "@/data/programs";
+import { getProgramBySlug } from "@/data/programs";
+import { fetchProgramsFromSheet } from "@/lib/googleSheets";
 import ProgramDetailClient from "./ProgramDetailClient";
-
-export function generateStaticParams() {
-  return programs.map((p) => ({
-    slug: p.slug,
-  }));
-}
 
 export async function generateMetadata({
   params,
@@ -14,8 +8,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const program = getProgramBySlug(slug);
-  if (!program) return { title: "Chương trình không tồn tại" };
+  const allPrograms = await fetchProgramsFromSheet();
+  const program =
+    allPrograms.find((p) => p.slug === slug) || getProgramBySlug(slug);
+  if (!program) return { title: "Chương trình & Học bổng" };
   return {
     title: program.title,
     description: program.description,
@@ -28,11 +24,9 @@ export default async function ProgramDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const program = getProgramBySlug(slug);
+  const allPrograms = await fetchProgramsFromSheet();
+  const program =
+    allPrograms.find((p) => p.slug === slug) || getProgramBySlug(slug);
 
-  if (!program) {
-    notFound();
-  }
-
-  return <ProgramDetailClient program={program} />;
+  return <ProgramDetailClient initialProgram={program} slug={slug} />;
 }

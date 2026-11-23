@@ -2,24 +2,27 @@
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #1e40af;
-  --color-primary-600: #1e3a8a;
-  --color-primary-700: #1e3570;
-  --color-primary-800: #1a2e5c;
-  --color-primary-900: #1e2a5e;
+  /* Lucky Star Crimson / Wine Red Palette */
+  --color-primary-50: #fdf2f2;
+  --color-primary-100: #fde2e2;
+  --color-primary-200: #fcc8c8;
+  --color-primary-300: #f89e9e;
+  --color-primary-400: #e04848;
+  --color-primary-500: #c62828;
+  --color-primary-600: #b31b1b;
+  --color-primary-700: #9c1b1f;
+  --color-primary-800: #84150e; /* Signature Lucky Star Red */
+  --color-primary-900: #5c0f0a;
+  --color-primary-950: #3b0805;
 
-  --color-accent-50: #fefce8;
-  --color-accent-100: #fef9c3;
-  --color-accent-200: #fef08a;
-  --color-accent-300: #fde047;
-  --color-accent-400: #facc15;
-  --color-accent-500: #eab308;
-  --color-accent-600: #ca8a04;
+  /* Accent Gold / Amber for badges and stars */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-600: #d97706;
 
   --font-heading: var(--font-be-vietnam-pro), sans-serif;
   --font-body: var(--font-inter), sans-serif;
@@ -27,11 +30,14 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+  --ls-primary: #84150e;
+  --ls-secondary: #9c1b1f;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: light !important;
 }
 
 body {
@@ -60,8 +66,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media (min-width: 768px) {
   .section-padding {
-    padding-top: 6rem;
-    padding-bottom: 6rem;
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
   }
 }
 
@@ -85,17 +91,50 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+/* Lucky Star Gradient & Titles */
 .gradient-primary {
-  background-image: linear-gradient(to right, #1e40af, #1e2a5e);
+  background-image: linear-gradient(135deg, #84150e 0%, #b31b1b 100%);
 }
 
-.gradient-accent {
-  background-image: linear-gradient(to right, #facc15, #eab308);
+.gradient-lucky {
+  background-image: linear-gradient(90deg, #c62828 0%, #7b1fa2 100%);
 }
 
-.text-gradient {
+.text-gradient-lucky {
+  background: linear-gradient(90deg, #c62828 0%, #7b1fa2 100%);
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(to right, #1e40af, #1e3570);
+  -webkit-text-fill-color: transparent;
+}
+
+/* Lucky Star Card hover divider animation */
+.ls-divider {
+  height: 3px;
+  width: 40px;
+  background: linear-gradient(90deg, #84150e, #c62828);
+  border-radius: 2px;
+  transition: width 0.35s ease;
+}
+
+.group:hover .ls-divider {
+  width: 65px;
+}
+
+/* Lucky Star Timeline Connector */
+.timeline-stem::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  background-color: #84150e;
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+@media (max-width: 768px) {
+  .timeline-stem::after {
+    left: 24px;
+  }
 }

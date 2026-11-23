@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { type Locale, type TranslationSchema, translations } from "@/data/i18n";
 
 interface LanguageContextType {
@@ -13,29 +13,38 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window !== "undefined") {
+  const [locale, setLocaleState] = useState<Locale>("vi");
+
+  useEffect(() => {
+    try {
       const saved = localStorage.getItem("locale") as Locale;
-      if (saved === "vi" || saved === "en") return saved;
+      if (saved === "vi" || saved === "zh") {
+        setLocaleState(saved);
+      } else {
+        setLocaleState("vi");
+      }
+    } catch {
+      // Ignore localStorage access errors
     }
-    return "vi";
-  });
+  }, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
-    if (typeof window !== "undefined") {
+    try {
       localStorage.setItem("locale", newLocale);
+    } catch {
+      // Ignore
     }
   };
 
   const toggleLocale = () => {
-    const nextLocale = locale === "vi" ? "en" : "vi";
+    const nextLocale: Locale = locale === "vi" ? "zh" : "vi";
     setLocale(nextLocale);
   };
 
   return (
     <LanguageContext.Provider
-      value={{ locale, setLocale, toggleLocale, t: translations[locale] }}
+      value={{ locale, setLocale, toggleLocale, t: translations[locale] || translations.vi }}
     >
       {children}
     </LanguageContext.Provider>
