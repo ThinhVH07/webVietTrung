@@ -1,6 +1,7 @@
 name: Landing Page CI/CD
 
 on:
+  workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -20,11 +21,7 @@ concurrency:
 jobs:
   ci:
     name: Lint and Build
-    runs-on:
-      - self-hosted
-      - k3s
-      - staging
-      - shared
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +29,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
 
       - name: Enable Corepack pnpm
         run: |
