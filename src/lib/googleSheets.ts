@@ -58,24 +58,24 @@ export function normalizeNewsRow(
   raw: Record<string, unknown>,
   index = 0
 ): NewsArticle {
-  const title = String(raw.title || raw["title VI"] || raw.titleVi || "").trim();
+  const title = String(raw.title || raw["title VI"] || raw.titleVi || raw["Tiêu đề"] || "").trim();
   const titleEn = String(raw.titleEn || raw["title EN"] || title).trim();
-  const titleZh = String(raw.titleZh || raw["title ZH"] || title).trim();
+  const titleZh = String(raw.titleZh || raw["title ZH"] || raw.titleJa || raw["title JA"] || title).trim();
 
   const excerpt = String(
-    raw.excerpt || raw["excerpt VI"] || raw.excerptVi || ""
+    raw.excerpt || raw["excerpt VI"] || raw.excerptVi || raw["Tóm tắt"] || ""
   ).trim();
   const excerptEn = String(raw.excerptEn || raw["excerpt EN"] || excerpt).trim();
-  const excerptZh = String(raw.excerptZh || raw["excerpt ZH"] || excerpt).trim();
+  const excerptZh = String(raw.excerptZh || raw["excerpt ZH"] || raw.excerptJa || raw["excerpt JA"] || excerpt).trim();
 
   const content = String(
-    raw.content || raw["content VI"] || raw.contentVi || excerpt
+    raw.content || raw["content VI"] || raw.contentVi || raw["Nội dung"] || excerpt
   ).trim();
   const contentEn = String(
     raw.contentEn || raw["content EN"] || content
   ).trim();
   const contentZh = String(
-    raw.contentZh || raw["content ZH"] || content
+    raw.contentZh || raw["content ZH"] || raw.contentJa || raw["content JA"] || content
   ).trim();
 
   const slug = String(raw.slug || `tin-tuc-${index + 1}`)
@@ -129,18 +129,18 @@ export function normalizeProgramRow(
   raw: Record<string, unknown>,
   index = 0
 ): Program {
-  const title = String(raw.title || raw["title VI"] || "").trim();
+  const title = String(raw.title || raw["title VI"] || raw["Tiêu đề"] || raw["Tên chương trình"] || "").trim();
   const titleEn = String(raw.titleEn || raw["title EN"] || title).trim();
-  const titleZh = String(raw.titleZh || raw["title ZH"] || title).trim();
+  const titleZh = String(raw.titleZh || raw["title ZH"] || raw.titleJa || raw["title JA"] || title).trim();
 
   const description = String(
-    raw.description || raw["description VI"] || ""
+    raw.description || raw["description VI"] || raw["Mô tả"] || ""
   ).trim();
   const descriptionEn = String(
     raw.descriptionEn || raw["description EN"] || description
   ).trim();
   const descriptionZh = String(
-    raw.descriptionZh || raw["description ZH"] || description
+    raw.descriptionZh || raw["description ZH"] || raw.descriptionJa || raw["description JA"] || description
   ).trim();
 
   let features: string[] = [];
@@ -192,25 +192,27 @@ export function normalizeFacultyRow(
   raw: Record<string, unknown>,
   index = 0
 ): FacultyMember {
-  const name = String(raw.name || raw["name VI"] || "").trim();
+  const name = String(raw.name || raw["Tên"] || raw["Tên VI"] || raw["name VI"] || "").trim();
   return {
     name,
-    nameEn: String(raw.nameEn || raw["name EN"] || name).trim(),
-    nameZh: String(raw.nameZh || raw["name ZH"] || name).trim(),
-    title: String(raw.title || raw["title VI"] || "").trim(),
-    titleEn: String(raw.titleEn || raw["title EN"] || "").trim(),
-    titleZh: String(raw.titleZh || raw["title ZH"] || "").trim(),
-    bio: String(raw.bio || raw["bio VI"] || "").trim(),
-    bioEn: String(raw.bioEn || raw["bio EN"] || "").trim(),
-    bioZh: String(raw.bioZh || raw["bio ZH"] || "").trim(),
+    nameEn: String(raw.nameEn || raw["Tên EN"] || raw["name EN"] || name).trim(),
+    nameZh: String(raw.nameZh || raw["Tên JA"] || raw["Tên ZH"] || raw["name ZH"] || name).trim(),
+    title: String(raw.title || raw["Chức vụ VI"] || raw["Chức vụ"] || raw["title VI"] || "").trim(),
+    titleEn: String(raw.titleEn || raw["Chức vụ EN"] || raw["title EN"] || "").trim(),
+    titleZh: String(raw.titleZh || raw["Chức vụ JA"] || raw["Chức vụ ZH"] || raw["title ZH"] || "").trim(),
+    bio: String(raw.bio || raw["Mô tả VI"] || raw["Mô tả"] || raw["bio VI"] || "").trim(),
+    bioEn: String(raw.bioEn || raw["Mô tả EN"] || raw["bio EN"] || "").trim(),
+    bioZh: String(raw.bioZh || raw["Mô tả JA"] || raw["Mô tả ZH"] || raw["bio ZH"] || "").trim(),
     image: String(
       raw.image || `/images/placeholder/faculty-${(index % 3) + 1}.jpg`
     ).trim(),
     specialization: String(
-      raw.specialization || raw["specialization VI"] || ""
+      raw.specialization || raw["Chuyên môn VI"] || raw["Chuyên môn"] || raw["specialization VI"] || ""
     ).trim(),
     specializationZh: String(
       raw.specializationZh ||
+        raw["Chuyên môn JA"] ||
+        raw["Chuyên môn ZH"] ||
         raw["specialization ZH"] ||
         raw.specialization ||
         ""
@@ -501,6 +503,60 @@ export async function fetchStatsFromSheet(): Promise<StatItemData[]> {
 
   inflightStats = (async () => {
     try {
+      // 1. Thử đọc từ tab "home" trước (theo mẫu cấu trúc WEB_Việt-Nhật)
+      const homeRows = await fetchRawSheetRows("home");
+      if (homeRows.length > 0) {
+        const homeMap: Record<string, { vi: string; zh: string; en: string }> = {};
+        homeRows.forEach((r) => {
+          if (r && r.key) {
+            const k = String(r.key).trim();
+            homeMap[k] = {
+              vi: String(r.vi || "").trim(),
+              zh: String(r.zh || r.ja || r.vi || "").trim(),
+              en: String(r.en || r.vi || "").trim(),
+            };
+          }
+        });
+
+        if (homeMap["stat_students_value"] || homeMap["stat_students_count"]) {
+          const statsResult: StatItemData[] = [
+            {
+              key: "stat_students",
+              value: Number(homeMap["stat_students_value"]?.vi || homeMap["stat_students_count"]?.vi?.replace(/\D/g, "")) || 9999,
+              suffix: homeMap["stat_students_suffix"]?.vi || "+",
+              label_vi: homeMap["stat_students_label"]?.vi || homeMap["stat_students"]?.vi || "Người dùng / Học viên",
+              label_zh: homeMap["stat_students_label"]?.zh || homeMap["stat_students"]?.zh || "累计咨询学子",
+            },
+            {
+              key: "stat_success",
+              value: Number(homeMap["stat_success_value"]?.vi || homeMap["stat_programs_value"]?.vi) || 345,
+              suffix: homeMap["stat_success_suffix"]?.vi || "+",
+              label_vi: homeMap["stat_success_label"]?.vi || homeMap["stat_programs_label"]?.vi || "Apply thành công",
+              label_zh: homeMap["stat_success_label"]?.zh || homeMap["stat_programs_label"]?.zh || "奖学金申请成功",
+            },
+            {
+              key: "stat_partners",
+              value: Number(homeMap["stat_partners_value"]?.vi) || 120,
+              suffix: homeMap["stat_partners_suffix"]?.vi || "+",
+              label_vi: homeMap["stat_partners_label"]?.vi || "Trường đại học đối tác",
+              label_zh: homeMap["stat_partners_label"]?.zh || "中方合作高校",
+            },
+            {
+              key: "stat_scholarships",
+              value: Number(homeMap["stat_scholarships_value"]?.vi || homeMap["stat_years_value"]?.vi) || 138,
+              suffix: homeMap["stat_scholarships_suffix"]?.vi || "+",
+              label_vi: homeMap["stat_scholarships_label"]?.vi || homeMap["stat_years_label"]?.vi || "Suất học bổng toàn phần đã trao",
+              label_zh: homeMap["stat_scholarships_label"]?.zh || homeMap["stat_years_label"]?.zh || "全额奖学金名额",
+            },
+          ];
+
+          cachedStats = statsResult;
+          writeStorageCache("cache_sheet_stats", statsResult);
+          return statsResult;
+        }
+      }
+
+      // 2. Fallback: Nếu không có tab "home", đọc từ tab "stats"
       const rows = await fetchRawSheetRows("stats");
       if (rows.length === 0) return cachedStats || [];
 
@@ -538,11 +594,14 @@ export async function fetchTimelineFromSheet(): Promise<TimelineStepData[]> {
 
   inflightTimeline = (async () => {
     try {
-      const rows = await fetchRawSheetRows("timeline");
+      let rows = await fetchRawSheetRows("timeline");
+      if (rows.length === 0) {
+        rows = await fetchRawSheetRows("ChuongTrinh_TraoDoi");
+      }
       if (rows.length === 0) return cachedTimeline || [];
 
       const result: TimelineStepData[] = rows
-        .filter((r) => r && (r.step || r.title_vi))
+        .filter((r) => r && (r.step || r.title_vi || r.title))
         .map((r, idx) => {
           const parseList = (val: unknown): string[] => {
             if (Array.isArray(val)) return val.map((x) => String(x).trim()).filter(Boolean);
@@ -554,14 +613,14 @@ export async function fetchTimelineFromSheet(): Promise<TimelineStepData[]> {
             step: String(r.step || `0${idx + 1}`).padStart(2, "0"),
             tag_vi: String(r.tag_vi || `GIAI ĐOẠN 0${idx + 1}`).trim(),
             tag_zh: String(r.tag_zh || `阶段 0${idx + 1}`).trim(),
-            location_vi: String(r.location_vi || "").trim(),
-            location_zh: String(r.location_zh || "").trim(),
-            title_vi: String(r.title_vi || "").trim(),
-            title_zh: String(r.title_zh || r.title_vi || "").trim(),
-            desc_vi: String(r.desc_vi || "").trim(),
-            desc_zh: String(r.desc_zh || r.desc_vi || "").trim(),
-            highlights_vi: parseList(r.highlights_vi),
-            highlights_zh: parseList(r.highlights_zh || r.highlights_vi),
+            location_vi: String(r.location_vi || r.location || "").trim(),
+            location_zh: String(r.location_zh || r.location || "").trim(),
+            title_vi: String(r.title_vi || r.title || "").trim(),
+            title_zh: String(r.title_zh || r.title_vi || r.title || "").trim(),
+            desc_vi: String(r.desc_vi || r.desc || r.requirement || "").trim(),
+            desc_zh: String(r.desc_zh || r.desc_vi || r.desc || "").trim(),
+            highlights_vi: parseList(r.highlights_vi || r.scholarship),
+            highlights_zh: parseList(r.highlights_zh || r.highlights_vi || r.scholarship),
             image: String(r.image || `/images/landscapes/china-beijing.jpg`).trim(),
           };
         });
@@ -594,13 +653,13 @@ export async function fetchPartnersFromSheet(): Promise<PartnerData[]> {
       if (rows.length === 0) return cachedPartners || [];
 
       const result: PartnerData[] = rows
-        .filter((r) => r && (r.name_vi || r.name))
+        .filter((r) => r && (r.name_vi || r.name || r["Tên"]))
         .map((r, idx) => ({
           id: String(r.id || `partner_${idx + 1}`).trim(),
-          name_vi: String(r.name_vi || r.name || "").trim(),
-          name_zh: String(r.name_zh || r.name_vi || "").trim(),
-          location: String(r.location || "").trim(),
-          rank: String(r.rank || "").trim(),
+          name_vi: String(r.name_vi || r.name || r["Tên"] || "").trim(),
+          name_zh: String(r.name_zh || r.countryJa || r.nameZh || r.name_vi || r.name || "").trim(),
+          location: String(r.location || r.country || "").trim(),
+          rank: String(r.rank || r.countryEn || "").trim(),
         }));
 
       if (result.length > 0) {
@@ -627,6 +686,53 @@ export async function fetchSiteConfigFromSheet(): Promise<Record<string, SiteCon
 
   inflightSiteConfig = (async () => {
     try {
+      // 1. Thử đọc từ tab "home" trước (mẫu WEB_Việt-Nhật)
+      const homeRows = await fetchRawSheetRows("home");
+      if (homeRows.length > 0) {
+        const homeConfig: Record<string, SiteConfigItem> = {};
+        homeRows.forEach((r) => {
+          if (r && r.key) {
+            const k = String(r.key).trim();
+            homeConfig[k] = {
+              key: k,
+              name: k,
+              value_vi: String(r.vi || "").trim(),
+              value_zh: String(r.zh || r.ja || r.vi || "").trim(),
+            };
+          }
+        });
+
+        // Ánh xạ sang các key chuẩn của website
+        if (homeConfig["contact_phone"] && !homeConfig["phone"]) {
+          homeConfig["phone"] = homeConfig["contact_phone"];
+        }
+        if (homeConfig["contact_email"] && !homeConfig["email"]) {
+          homeConfig["email"] = homeConfig["contact_email"];
+        }
+        if (homeConfig["contact_address"] && !homeConfig["address"]) {
+          homeConfig["address"] = homeConfig["contact_address"];
+        }
+        if (homeConfig["contact_hours"] && !homeConfig["opening_hours"]) {
+          homeConfig["opening_hours"] = homeConfig["contact_hours"];
+        }
+        if (homeConfig["social_facebook"] && !homeConfig["facebook_url"]) {
+          homeConfig["facebook_url"] = homeConfig["social_facebook"];
+        }
+        if (homeConfig["social_youtube"] && !homeConfig["youtube_url"]) {
+          homeConfig["youtube_url"] = homeConfig["social_youtube"];
+        }
+        if (homeConfig["social_zalo"] && !homeConfig["zalo_url"]) {
+          homeConfig["zalo_url"] = homeConfig["social_zalo"];
+        }
+
+        if (Object.keys(homeConfig).length > 0) {
+          cachedSiteConfig = homeConfig;
+          writeStorageCache("cache_sheet_site_config", homeConfig);
+          return homeConfig;
+        }
+      }
+
+      // 2. Fallback: Nếu không có tab "home", đọc từ tab "site_config"
       const rows = await fetchRawSheetRows("site_config");
       if (rows.length === 0) return cachedSiteConfig || {};
 
