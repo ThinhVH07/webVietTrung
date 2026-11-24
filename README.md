@@ -6,7 +6,7 @@
 ## 📊 LINK BẢNG TÍNH GOOGLE SHEETS QUẢN TRỊ DỮ LIỆU
 Toàn bộ dữ liệu hiển thị trên website (Số liệu thống kê, Hotline, Học bổng CSC/CIS, Lộ trình du học, Tin tức, Giảng viên...) được kết nối và quản trị trực tiếp tại:
 
-👉 **[BẢNG TÍNH GOOGLE SHEETS QUẢN TRỊ DỰ ÁN](https://docs.google.com/spreadsheets/d/1tO_F1zDP81n9io4B0HV1qgMWvZ9EaMg0tHSA6HqYdG8/edit)**
+👉 **[BẢNG TÍNH GOOGLE SHEETS QUẢN TRỊ DỰ ÁN](https://docs.google.com/spreadsheets/d/1g9f6khQqciZHwW9UdMh6p-c1IN0WRighRkfyx503gDw/edit)**
 
 > **Cơ chế cập nhật**: Quản trị viên chỉ cần mở link Google Sheets trên, chỉnh sửa chữ/số tại các ô tính $\rightarrow$ Website sẽ tự động đồng bộ ngay lập tức (dưới 0.3s) mà không cần can thiệp vào code.
 

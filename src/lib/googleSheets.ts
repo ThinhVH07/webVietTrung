@@ -10,7 +10,7 @@ export function getGoogleSheetApiUrl(): string {
     process.env.NEXT_PUBLIC_GOOGLE_SHEET_API_URL ||
     process.env.NEXT_PUBLIC_API_URL ||
     process.env.NEXT_PUBLIC_SHEET_URL ||
-    "https://docs.google.com/spreadsheets/d/1tO_F1zDP81n9io4B0HV1qgMWvZ9EaMg0tHSA6HqYdG8/edit"
+    "https://docs.google.com/spreadsheets/d/1g9f6khQqciZHwW9UdMh6p-c1IN0WRighRkfyx503gDw/edit"
   ).trim();
 }
 

@@ -160,7 +160,7 @@ Sửa thông tin: Đổi số liệu, thêm học bổng, sửa hotline...
 [BƯỚC 2: GOOGLE SHEETS CLOUD ENGINE]
 Đóng vai trò là Headless Data API qua giao thức Google Visualization (GViz)
 Xuất bản dữ liệu sạch dạng CSV qua URL:
-https://docs.google.com/spreadsheets/d/<ID>/gviz/tq?tqx=out:csv&sheet=<tên_tab>
+https://docs.google.com/spreadsheets/d/1g9f6khQqciZHwW9UdMh6p-c1IN0WRighRkfyx503gDw/edit
             │
             ▼ (Website Next.js fetch trong < 0.3s)
 [BƯỚC 3: WEBSITE DU HỌC VIỆT - TRUNG]

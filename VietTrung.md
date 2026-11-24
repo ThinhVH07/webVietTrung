@@ -57,7 +57,7 @@ Xây dựng website cổng thông tin điện tử, tư vấn tuyển sinh và s
 - [x] Cung cấp bộ từ điển song ngữ chuẩn xác tại `src/data/i18n.ts` cho toàn bộ giao diện: Menu điều hướng, Tiêu đề phần, Nút kêu gọi (CTA), Nhãn biểu mẫu tuyển sinh, Thông báo chân trang.
 
 ### 3.3. Tích hợp Quản trị dữ liệu qua Google Sheets (Headless CMS Miễn Phí)
-- [x] Xây dựng bộ điều hợp (adapter) kết nối trực tiếp với trang Google Sheets công khai (`1tO_F1zDP81n9io4B0HV1qgMWvZ9EaMg0tHSA6HqYdG8`):
+- [x] Xây dựng bộ điều hợp (adapter) kết nối trực tiếp với trang Google Sheets công khai (`1g9f6khQqciZHwW9UdMh6p-c1IN0WRighRkfyx503gDw`):
   - **Tab `site_config`**: Cấu hình tên trung tâm, hotline, email, địa chỉ, mạng xã hội, khẩu hiệu song ngữ.
   - **Tab `stats`**: Quản lý 4 chỉ số thống kê nổi bật (Số học viên, Tỷ lệ đỗ học bổng, Trường đối tác, Số suất học bổng toàn phần đã trao).
   - **Tab `timeline`**: Quản lý lộ trình 4 bước du học cùng nội dung thuyết minh và hình ảnh tương ứng.
@@ -232,7 +232,7 @@ curl http://localhost:3005/
 
 ### 5.4. Hướng dẫn Quản trị Nội dung qua Google Sheets
 1. Mở trang Google Sheets quản trị dự án đã được chia sẻ quyền xem công khai:  
-   🔗 [Bảng tính Google Sheets Quản trị Du học Việt - Trung](https://docs.google.com/spreadsheets/d/1tO_F1zDP81n9io4B0HV1qgMWvZ9EaMg0tHSA6HqYdG8/edit)
+   🔗 [Bảng tính Google Sheets Quản trị Du học Việt - Trung](https://docs.google.com/spreadsheets/d/1g9f6khQqciZHwW9UdMh6p-c1IN0WRighRkfyx503gDw/edit)
 2. Chỉnh sửa nội dung tại các tab tương ứng:
    - Sửa số liệu thống kê tại tab **`stats`** (ví dụ: thay đổi số lượng học viên `9999+` hoặc số suất học bổng).
    - Thêm bài viết mới tại tab **`news`**.
